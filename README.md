@@ -31,13 +31,27 @@ If you are looking for old tutorial version please checkout this branch:<br />
 
 ## 🛠️ Tech Stack
 
-- **Framework:** Next.js 15 (App Router)
-- **Styling:** Tailwind CSS, Shadcn UI
-- **AI Integration:** Vercel AI SDK
-- **LLMs:** GPT-4o, Gemini, Deepseel using OpenRouter
+- **Framework:** Next.js 16 (App Router, Turbopack)
+- **Styling:** Tailwind CSS v4, Shadcn UI
+- **AI Integration:** Vercel AI SDK v6
+- **LLMs:** GPT-4o, Gemini, Deepseek via OpenRouter
 - **Web Search:** Exa Search API
 - **UI Components:** Shadcn
 - **Language:** TypeScript
+- **Package Manager:** Bun
+
+## 🔄 What's New (Dependency Refresh)
+
+This branch has been migrated from the original tutorial stack to the latest versions. The runtime behaviour is the same — only the toolchain moved forward.
+
+- **Next.js** 15 → 16 (Turbopack production builds, `next lint` removed)
+- **Vercel AI SDK** 4 → 6 (`generateObject` replaced with `generateText` + `Output.object()`, `useChat` now uses `DefaultChatTransport`)
+- **@ai-sdk/react** 1 → 3, **@openrouter/ai-sdk-provider** 0.4 → 2
+- **Zod** 3 → 4, **lucide-react** 0.x → 1, **react-syntax-highlighter** 15 → 16
+- **ESLint config** migrated to the native flat config from `eslint-config-next` v16
+- **Package manager:** switched from npm to **Bun** (`bun.lock` replaces `package-lock.json`)
+
+> Want the original tutorial code? Check out commit [`274eff7`](https://github.com/codebucks27/Deep-Research-AI-Agent/commit/274eff7) (the last version before the refresh) or browse any earlier commit on this branch.
 
 ## ⚡ Prerequisites
 
@@ -57,14 +71,10 @@ cd Deep-Research-AI-Agent
 
 ### 2. Install Dependencies
 
-> **NOTE:** When installing the required dependencies, use the `--legacy-peer-deps` flag if you encounter any issues with inter-dependent dependencies.
+This project uses [Bun](https://bun.sh) as the package manager.
 
 ```bash
-npm install
-# or
-yarn install
-# or
-pnpm install
+bun install
 ```
 
 ### 3. Environment Variables
@@ -74,11 +84,7 @@ Create a `.env.local` file in the root directory. Check `.env.example` for requi
 ### 4. Start Development Server
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+bun run dev
 ```
 
 Visit `http://localhost:3000` to see your app.
