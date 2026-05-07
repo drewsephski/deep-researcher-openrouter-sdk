@@ -6,10 +6,12 @@ export const MAX_RETRY_ATTEMPTS = 3; // It is the number of times the model will
 export const RETRY_DELAY_MS = 1000; // It is the delay in milliseconds between retries for the model to call LLMs
 
 // Model names
+export const PRIMARY_MODEL = "google/gemini-2.5-flash-lite-preview-09-2025";
+export const FALLBACK_MODEL = "openrouter/free";
+
 export const MODELS = {
-  PLANNING: "google/gemini-3-pro-preview",
-  EXTRACTION: "openai/gpt-5-mini",
-  ANALYSIS: "google/gemini-3-flash-preview",
-  REPORT: "google/gemini-3-pro-preview"
-  // REPORT: "anthropic/claude-3.7-sonnet:thinking",
+  PLANNING: PRIMARY_MODEL,
+  EXTRACTION: PRIMARY_MODEL,
+  ANALYSIS: PRIMARY_MODEL,
+  REPORT: PRIMARY_MODEL,
 }; 

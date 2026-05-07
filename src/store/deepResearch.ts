@@ -1,9 +1,14 @@
 import { Activity, Source } from "@/app/api/deep-research/types";
 import { create } from "zustand";
 
+export interface Question {
+  question: string;
+  options: string[];
+}
+
 interface DeepResearchState {
   topic: string;
-  questions: string[];
+  questions: Question[];
   answers: string[];
   currentQuestion: number;
   isCompleted: boolean;
@@ -15,7 +20,7 @@ interface DeepResearchState {
 
 interface DeepResearchActions {
   setTopic: (topic: string) => void;
-  setQuestions: (questions: string[]) => void;
+  setQuestions: (questions: Question[]) => void;
   setAnswers: (answers: string[]) => void;
   setCurrentQuestion: (index: number) => void;
   setIsCompleted: (isCompleted: boolean) => void;
@@ -45,7 +50,7 @@ export const useDeepResearchStore = create<
 >((set, get) => ({
   ...initialState,
   setTopic: (topic: string) => set({ topic }),
-  setQuestions: (questions: string[]) => set({ questions }),
+  setQuestions: (questions: Question[]) => set({ questions }),
   setAnswers: (answers: string[]) => set({ answers }),
   setCurrentQuestion: (currentQuestion: number) => set({ currentQuestion }),
   setIsCompleted: (isCompleted: boolean) => set({ isCompleted }),

@@ -8,8 +8,8 @@ import {
   Prism as SyntaxHighlighter,
   SyntaxHighlighterProps,
 } from "react-syntax-highlighter";
-import { nightOwl } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { Download } from "lucide-react";
+import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { Download, FileText } from "lucide-react";
 import { Button } from "../button";
 
 type CodeProps = ComponentPropsWithRef<"code"> & {
@@ -36,36 +36,41 @@ const ResearchReport = () => {
 
   if (report.length <= 0 && isLoading) {
     return (
-      <Card className="p-4 max-w-[50vw] bg-white/60 border px-4 py-2 rounded-xl">
-        <div className="flex flex-col items-center justify-center space-y-4 p-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          <p className="text-sm text-muted-foreground">
-            Researching your topic...
-          </p>
+      <div className="w-full max-w-[90vw] xl:max-w-[60vw] flex flex-col items-start gap-6 py-8 animate-fade-in-up">
+        <div className="flex items-center gap-3">
+          <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary border-t-transparent" />
+          <span className="text-sm font-semibold tracking-wide uppercase text-muted-foreground">
+            Research in progress
+          </span>
         </div>
-      </Card>
+        <div className="w-full h-px bg-border/60" />
+      </div>
     );
   }
 
   if (report.length <= 0) return null;
 
   return (
-    <Card
-      className="max-w-[90vw] xl:max-w-[60vw] relative px-4 py-6 rounded-xl border-black/10 border-solid shadow-none p-6
-     bg-white/60 backdrop-blur-xl border antialiased
-    "
-    >
-      <div className="flex justify-end gap-2 mb-4 absolute top-4 right-4">
+    <Card className="w-full max-w-[90vw] xl:max-w-[60vw] bg-card border border-border/80 shadow-sm rounded-2xl relative animate-fade-in-up">
+      <div className="flex items-center justify-between px-6 sm:px-8 py-6 border-b border-border/60">
+        <div className="flex items-center gap-2.5">
+          <FileText className="w-4 h-4 text-muted-foreground" />
+          <h2 className="text-sm font-semibold tracking-widest uppercase text-muted-foreground">
+            Research Report
+          </h2>
+        </div>
         <Button
           size="sm"
-          className="flex items-center gap-2 rounded"
+          variant="outline"
+          className="flex items-center gap-2 rounded-xl text-xs font-medium tracking-wide border-border/80 hover:bg-muted/50"
           onClick={handleMarkdownDownload}
         >
-          <Download className="w-4 h-4" /> Download
+          <Download className="w-3.5 h-3.5" />
+          Download
         </Button>
       </div>
 
-      <div className="prose prose-sm md:prose-base max-w-none prose-pre:p-2 overflow-x-scroll">
+      <div className="prose prose-sm md:prose-base max-w-none px-6 sm:px-8 py-8 overflow-x-auto font-body">
         <Markdown
           remarkPlugins={[remarkGfm]}
           components={{
@@ -75,7 +80,7 @@ const ResearchReport = () => {
 
               if (!inline && language) {
                 const SyntaxHighlighterProps: SyntaxHighlighterProps = {
-                  style: nightOwl,
+                  style: oneLight,
                   language,
                   PreTag: "div",
                   children: String(children).replace(/\n$/, ""),

@@ -1,14 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDeepResearchStore } from "@/store/deepResearch";
+import { type Activity, type Source } from "@/app/api/deep-research/types";
 import CompletedQuestions from "./CompletedQuestions";
 import QuestionForm from "./QuestionForm";
 import ResearchActivities from "./ResearchActivities";
 import ResearchReport from "./ResearchReport";
 import ResearchTimer from "./ResearchTimer";
+
+interface DataPart {
+  type: string;
+  data: Activity | string;
+}
 
 const QnA = () => {
   const {
@@ -22,25 +27,27 @@ const QnA = () => {
     setReport,
   } = useDeepResearchStore();
 
-  const [hasStarted, setHasStarted] = useState(false);
+  const hasStartedRef = useRef(false);
 
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/deep-research",
     }),
-    onData: (dataPart: any) => {
+    onData: (dataPart) => {
+      const part = dataPart as DataPart;
       // Handle activity data parts
-      if (dataPart.type === "data-activity") {
-        setActivities((prev: any[]) => [...prev, dataPart.data]);
+      if (part.type === "data-activity") {
+        const activity = part.data as Activity;
+        setActivities((prev: Activity[]) => [...prev, activity]);
 
         // Extract sources from extract activities
         if (
-          dataPart.data.type === "extract" &&
-          dataPart.data.status === "complete"
+          activity.type === "extract" &&
+          activity.status === "complete"
         ) {
-          const url = dataPart.data.message.split("from ")[1];
+          const url = activity.message.split("from ")[1];
           if (url) {
-            setSources((prev: any[]) => [
+            setSources((prev: Source[]) => [
               ...prev,
               {
                 url,
@@ -52,8 +59,8 @@ const QnA = () => {
       }
 
       // Handle report data parts
-      if (dataPart.type === "data-report") {
-        setReport(dataPart.data as string);
+      if (part.type === "data-report") {
+        setReport(part.data as string);
       }
     },
   });
@@ -70,10 +77,10 @@ const QnA = () => {
       const lastMessage = messages[messages.length - 1];
       if (lastMessage.role === "assistant" && lastMessage.parts) {
         const textParts = lastMessage.parts.filter(
-          (part: any) => part.type === "text"
+          (part: { type: string; text?: string }) => part.type === "text"
         );
         if (textParts.length > 0) {
-          const text = textParts.map((part: any) => part.text).join("");
+          const text = textParts.map((part: { type: string; text?: string }) => part.text).join("");
           if (text.includes("<report>")) {
             setReport(text);
           }
@@ -83,10 +90,10 @@ const QnA = () => {
   }, [messages, setReport]);
 
   useEffect(() => {
-    if (isCompleted && questions.length > 0 && !hasStarted) {
-      setHasStarted(true);
-      const clarifications = questions.map((question, index) => ({
-        question: question,
+    if (isCompleted && questions.length > 0 && !hasStartedRef.current) {
+      hasStartedRef.current = true;
+      const clarifications = questions.map((q, index) => ({
+        question: q.question,
         answer: answers[index],
       }));
 
@@ -97,15 +104,17 @@ const QnA = () => {
         }),
       });
     }
-  }, [isCompleted, questions, answers, topic, sendMessage, hasStarted]);
+  }, [isCompleted, questions, answers, topic, sendMessage]);
 
   if (questions.length === 0) return null;
 
   return (
-    <div className="flex gap-4 w-full flex-col items-center mb-16">
+    <div className="flex w-full flex-col items-start gap-6 sm:gap-8 animate-fade-in-up">
       <QuestionForm />
       <CompletedQuestions />
-      <ResearchTimer />
+      <div className="flex items-center gap-4">
+        <ResearchTimer />
+      </div>
       <ResearchActivities />
       <ResearchReport />
     </div>

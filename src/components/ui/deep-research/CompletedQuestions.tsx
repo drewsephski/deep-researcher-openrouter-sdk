@@ -7,29 +7,35 @@ import {
     AccordionItem,
     AccordionTrigger,
   } from "@/components/ui/accordion"
+import { MessageSquare } from "lucide-react";
 
 const CompletedQuestions = () => {
     const {questions, answers, isCompleted} = useDeepResearchStore();
 
     if(!isCompleted || questions.length === 0) return null;
     return (
-        <Accordion type="single" collapsible className="w-full max-w-[90vw] sm:max-w-[80vw] xl:max-w-[50vw] bg-white/60 backdrop-blur-sm border px-4 py-2 rounded-xl">
+        <Accordion type="single" collapsible className="w-full max-w-[90vw] sm:max-w-[80vw] xl:max-w-[50vw] bg-card border border-border/80 shadow-sm rounded-2xl animate-fade-in-up">
           <AccordionItem value="item-0" className="border-0">
-            <AccordionTrigger className="text-base capitalize hover:no-underline">
-              <span>Questions and Answers</span>
+            <AccordionTrigger className="px-6 sm:px-8 py-6 text-sm font-semibold tracking-widest uppercase text-muted-foreground hover:no-underline hover:bg-muted/40 rounded-2xl transition-colors">
+              <span className="flex items-center gap-2.5">
+                <MessageSquare className="w-4 h-4" />
+                Clarifying Questions & Responses
+              </span>
             </AccordionTrigger>
-            <AccordionContent>
-              <div className="mx-auto py-6 space-y-8">
+            <AccordionContent className="px-6 sm:px-8 pb-6">
+              <div className="space-y-1">
                 <Accordion type="single" collapsible className="w-full">
                   {questions.map((question, index) => (
-                    <AccordionItem key={index} value={`item-${index}`}>
-                      <AccordionTrigger className="text-left hover:no-underline">
-                        <span className="text-black/70">
-                          Question {index + 1}: {question}
+                    <AccordionItem key={index} value={`item-${index}`} className="border-b border-border/50 last:border-0">
+                      <AccordionTrigger className="text-left hover:no-underline py-4 text-sm font-medium text-foreground/80 font-body">
+                        <span className="pr-4">
+                          {index + 1}. {question.question}
                         </span>
                       </AccordionTrigger>
-                      <AccordionContent className="bg-muted/50 p-4 rounded-md">
-                        <p className="text-muted-foreground">{answers[index]}</p>
+                      <AccordionContent className="pb-4">
+                        <div className="bg-muted/50 border border-border/50 rounded-xl p-4">
+                          <p className="text-sm text-foreground/80 leading-relaxed font-body">{answers[index]}</p>
+                        </div>
                       </AccordionContent>
                     </AccordionItem>
                   ))}
@@ -39,6 +45,6 @@ const CompletedQuestions = () => {
           </AccordionItem>
         </Accordion>
       )
-    } 
+    }
 
 export default CompletedQuestions

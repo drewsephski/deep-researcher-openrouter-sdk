@@ -2,6 +2,7 @@ import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { generateText, Output } from 'ai';
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { PRIMARY_MODEL } from "../deep-research/constants";
 
 
 const openrouter = createOpenRouter({
@@ -11,28 +12,31 @@ const openrouter = createOpenRouter({
 const clarifyResearchGoals = async (topic: string) => {
 
     const prompt = `
-    Given the research topic <topic>${topic}</topic>, generate2-4 clarifying questions to help narrow down the research scope. Focus on identifying:
-    - Specifi aspects of interest
+    Given the research topic <topic>${topic}</topic>, generate 2-4 clarifying multiple-choice questions to help narrow down the research scope. For each question, provide 3-4 concise answer options. Focus on identifying:
+    - Specific aspects of interest
     - Required depth/complexity level
     - Any particular perspective or excluded sources
-    `
+    `;
 
-    try{
-        // AI SDK v6: Use generateText with Output.object() instead of generateObject
+    try {
         const { output } = await generateText({
-            model: openrouter("meta-llama/llama-3.3-70b-instruct"),
+            model: openrouter(PRIMARY_MODEL),
             prompt,
             output: Output.object({
                 schema: z.object({
-                    questions: z.array(z.string())
+                    questions: z.array(
+                        z.object({
+                            question: z.string(),
+                            options: z.array(z.string()).min(2).max(6),
+                        })
+                    )
                 })
             })
-          });
+        });
 
-          return output?.questions;
-    }catch(error){
-    console.log("Error while generating questions: ", error)
-
+        return output?.questions;
+    } catch (error) {
+        console.log("Error while generating questions: ", error);
     }
 }
 
